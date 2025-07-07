@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -33,7 +32,7 @@ app.post("/gerar-pix", async (req, res) => {
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
-        "Authorization": TOKEN,
+        "Authorization": token,
         "Content-Type": "application/json"
       },
       body: JSON.stringify(payload)
