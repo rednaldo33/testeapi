@@ -4,7 +4,9 @@ const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://ajudeamaria.site'
+}));
 app.use(bodyParser.json());
 
 const token = process.env.RISE_PAY_API_KEY;
