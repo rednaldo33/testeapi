@@ -1,19 +1,7 @@
-<<<<<<< HEAD
-
 {
   "name": "risepay-pix-api",
   "version": "1.0.0",
   "main": "server.js",
-  "dependencies": {
-    "body-parser": "^1.20.2",
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "node-fetch": "^2.6.7"
-=======
-{
-  "name": "testeapicerto",
-  "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,7 +11,9 @@
   "description": "",
   "dependencies": {
     "axios": "^1.10.0",
-    "express": "^5.1.0"
->>>>>>> ba6fbf2888a3827ac97ffcc55225e86212070720
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "node-fetch": "^2.6.7"
   }
 }
