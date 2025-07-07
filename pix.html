@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pagamento Pix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Inclui a biblioteca oficial do QRCode.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .box {
+      border: 1px solid #22c55e;
+      border-radius: 12px;
+      padding: 24px 20px;
+      text-align: center;
+    }
+    .box h2 {
+      color: #22c55e;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    #pix-qrcode {
+      margin: 20px auto;
+      width: 220px;
+      height: 220px;
+    }
+    textarea {
+      width: 95%;
+      margin-top: 12px;
+      font-size: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 8px;
+      resize: vertical;
+    }
+    .btn-copy {
+      margin-top: 15px;
+      background-color: #22c55e;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-copy:hover {
+      background-color: #1e9a4d;
+    }
+    .info {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #555;
+    }
+    .error {
+      color: #dc2626;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+    a.voltar {
+      display: inline-block;
+      margin-top: 20px;
+      color: #22c55e;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <!-- Logo Vakinha -->
+    <img src="images/4WxuUy801Xus.svg" alt="Vakinha" style="width: 120px; margin-bottom: 20px;" />
+
+    <h2>Pagamento via Pix</h2>
+    <div id="valorPix"></div>
+
+    <div id="pix-qrcode"></div>
+
+    <label for="pixCopiaColaBox" style="font-weight: 600; margin-top: 20px; display: block;">Copia e Cola Pix:</label>
+    <textarea id="pixCopiaColaBox" rows="4" readonly></textarea>
+
+    <button class="btn-copy" id="btnCopy">📋 Copiar código Pix</button>
+
+    <div id="timer" class="info"></div>
+    <div id="status" class="info" style="font-style: italic; color: #999;"></div>
+
+    <a href="index.html" class="voltar">← Voltar</a>
+  </div>
+
+  <script>
+    // Lê resultado salvo no localStorage
+    const result = JSON.parse(localStorage.getItem('pixResult') || '{}');
+    const valor = localStorage.getItem('pixValue') || "";
+    let pixCopy = result.paymentCode || result.pix_code || result.qrcode || result.pixCopiaECola || "";
+
+    // Exibe valor
+    document.getElementById('valorPix').innerHTML = valor ? `<strong>Valor:</strong> R$ ${Number(valor).toLocaleString("pt-BR", {minimumFractionDigits: 2})}` : "";
+
+    if (pixCopy) {
+      // Gera o QR Code
+      new QRCode(document.getElementById("pix-qrcode"), {
+        text: pixCopy,
+        width: 220,
+        height: 220
+      });
+
+      // Preenche o textarea com o código Pix
+      document.getElementById('pixCopiaColaBox').value = pixCopy;
+    } else {
+      document.getElementById('pix-qrcode').innerHTML = `<div class="error">Não foi possível gerar o Pix! Verifique os dados e tente novamente.</div>`;
+    }
+
+    // Botão copiar código Pix
+    document.getElementById('btnCopy').addEventListener('click', () => {
+      const copyText = document.getElementById('pixCopiaColaBox');
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); // Para dispositivos móveis
+
+      try {
+        document.execCommand('copy');
+        alert('Código Pix copiado para a área de transferência!');
+      } catch {
+        alert('Não foi possível copiar o código Pix. Por favor, copie manualmente.');
+      }
+    });
+
+    // Exemplo simples de timer (10 min)
+    let timeLeft = 600;
+    const timerEl = document.getElementById('timer');
+    const statusEl = document.getElementById('status');
+
+    function startTimer() {
+      if (!pixCopy) return;
+      const interval = setInterval(() => {
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          timerEl.innerHTML = '<span class="error">Tempo expirado!</span>';
+          statusEl.textContent = 'Pagamento expirado ou não realizado.';
+        } else {
+          const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+          const seconds = (timeLeft % 60).toString().padStart(2, '0');
+          timerEl.innerHTML = `<span style="color:#b91c1c; font-weight: 700;">Tempo restante para pagar: ${minutes}:${seconds}</span>`;
+          statusEl.textContent = 'Aguardando pagamento...';
+          timeLeft--;
+        }
+      }, 1000);
+    }
+
+    startTimer();
+  </script>
+</body>
+</html>
